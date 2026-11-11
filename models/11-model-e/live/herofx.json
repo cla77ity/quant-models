@@ -1,0 +1,82 @@
+{
+  "_": "Настройки для model_e.js. Поля с пометкой ПРОВЕРЬ возьми из спецификации инструмента в платформе HeroFX (правый клик по инструменту → Спецификация / Instrument info).",
+  "equity": 100000,
+  "_equity": "баланс демо-счёта в USD; обновляй раз в неделю (или пиши новый баланс через: node model_e.js --equity 101234)",
+  "goLive": "2026-11-11",
+  "instruments": {
+    "US500": {
+      "symbol": "US500",
+      "contractSize": 1,
+      "minLot": 0.01,
+      "lotStep": 0.01,
+      "enabled": true,
+      "_": "ПРОВЕРЬ имя и размер контракта"
+    },
+    "US100": {
+      "symbol": "NAS100",
+      "contractSize": 1,
+      "minLot": 0.01,
+      "lotStep": 0.01,
+      "enabled": true,
+      "_": "ПРОВЕРЬ"
+    },
+    "US30": {
+      "symbol": "US30",
+      "contractSize": 1,
+      "minLot": 0.01,
+      "lotStep": 0.01,
+      "enabled": true,
+      "_": "ПРОВЕРЬ"
+    },
+    "US2000": {
+      "symbol": "US2000",
+      "contractSize": 1,
+      "minLot": 0.01,
+      "lotStep": 0.01,
+      "enabled": true,
+      "_": "ПРОВЕРЬ; если у HeroFX нет Russell 2000 — enabled: false"
+    },
+    "GER40": {
+      "symbol": "GER40",
+      "contractSize": 1,
+      "minLot": 0.01,
+      "lotStep": 0.01,
+      "enabled": true,
+      "_": "ПРОВЕРЬ; цена в EUR"
+    },
+    "JP225": {
+      "symbol": "JPN225",
+      "contractSize": 1,
+      "minLot": 0.01,
+      "lotStep": 0.01,
+      "enabled": true,
+      "_": "ПРОВЕРЬ; цена в JPY"
+    },
+    "UK100": {
+      "symbol": "UK100",
+      "contractSize": 1,
+      "minLot": 0.01,
+      "lotStep": 0.01,
+      "enabled": true,
+      "_": "ПРОВЕРЬ; цена в GBP"
+    },
+    "XAU": {
+      "symbol": "XAUUSD",
+      "contractSize": 100,
+      "minLot": 0.01,
+      "lotStep": 0.01,
+      "enabled": true,
+      "_": "1 лот = 100 унций"
+    },
+    "XAG": {
+      "symbol": "XAGUSD",
+      "contractSize": 5000,
+      "minLot": 0.01,
+      "lotStep": 0.01,
+      "enabled": true,
+      "_": "ПРОВЕРЬ; обычно 1 лот = 5000 унций"
+    }
+  },
+  "executor": "mt5",
+  "_executor": "mt5: сделки делает советник ModelE в MetaTrader 5; manual: план для ручного исполнения"
+}

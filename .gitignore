@@ -1,0 +1,11 @@
+data-cache/
+node_modules/
+# live state of model E (generated daily)
+models/11-model-e/live/plan.md
+models/11-model-e/live/journal.csv
+models/11-model-e/live/targets.csv
+models/11-model-e/live/positions.json
+# forward journals
+models/05-ote-tick/results/forward_*
+*.ex5
+*.log
