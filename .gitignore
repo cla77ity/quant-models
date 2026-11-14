@@ -9,3 +9,5 @@ models/11-model-e/live/positions.json
 models/05-ote-tick/results/forward_*
 *.ex5
 *.log
+__pycache__/
+*.pyc
