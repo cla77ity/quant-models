@@ -137,6 +137,10 @@ if __name__ == "__main__":
                   "Только макро (счёт ≥ 0)": lambda i: 1 if F[i]["score"] >= 0 else 0,
                   "Тренд + макро-фильтр (счёт ≥ 0)": lambda i: 1 if trend(i) and F[i]["score"] >= 0 else 0,
                   "Тренд + размер по макро": lambda i: 0 if not trend(i) else 1 if F[i]["score"] >= 2 else 0 if F[i]["score"] <= -2 else 0.5}
+        # ежедневный макро-счёт (известный на закрытии дня) — его использует фильтр «тренд + макро» в модели 02
+        out_dir = Path(__file__).resolve().parent / "results"
+        out_dir.mkdir(exist_ok=True)
+        (out_dir / f"step1_scores_{IX}.json").write_text(json.dumps({d: F[i]["score"] for i, d in enumerate(days)}))
         start = next(i for i, d in enumerate(days) if d >= "2008-01-02")
         split = next(i for i, d in enumerate(days) if d >= "2017-01-01")
         print(f"\n================ {IX}  {days[start]} → {days[-1]}")

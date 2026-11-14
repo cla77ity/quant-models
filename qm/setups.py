@@ -46,6 +46,49 @@ def trend_fn(k15):
     return at
 
 
+def tf_trend(key_fn, n):
+    """Тренд по старшему таймфрейму, собранному из 15m-свечей: закрытие последнего ЗАВЕРШЁННОГО бара (час / 4 часа / день)
+    выше его SMA(n) → True. Незавершённый бар не используется — иначе тест «знал бы» закрытие заранее.
+    key_fn(t) — номер бара (например, час = t // 3 600 000)."""
+    def make(k15):
+        t, c = k15["t"], k15["c"].tolist()
+        keys = key_fn(t)
+        st, closes, cur, last = [None] * len(t), [], None, None
+        for i in range(len(t)):
+            k = keys[i]
+            if cur is not None and k != cur:
+                closes.append(last)                 # бар завершился — его закрытие известно
+            cur, last = k, c[i]
+            if len(closes) >= n:
+                s = 0.0
+                for x in closes[-n:]:
+                    s += x
+                st[i] = closes[-1] > s / n
+        closes_at = t + 15 * 60_000
+
+        def at(tm):
+            i = int(np.searchsorted(closes_at, tm, side="right")) - 1
+            return None if i < 0 else st[i]
+        return at
+    return make
+
+
+def cme_days(t):
+    """Торговый день CME для массива меток: дата по Нью-Йорку через 6 часов (18:00 → следующий день)."""
+    return ny(np.asarray(t) + 6 * 3_600_000)[0]
+
+
+TREND_1H = tf_trend(lambda t: t // 3_600_000, 50)
+TREND_4H = tf_trend(lambda t: t // 14_400_000, 50)
+TREND_DAY = tf_trend(cme_days, 20)
+
+
+def trend_stack(k15):
+    """1h и день согласны → их общее направление; не согласны → None (сделок нет)."""
+    a, b = TREND_1H(k15), TREND_DAY(k15)
+    return lambda t: (a(t) if a(t) is not None and a(t) == b(t) else None)
+
+
 class _Base:
     """Общая часть: данные 5m, ATR, тренд, завершение вариантов выхода."""
     def __init__(self, k15, k5, P):

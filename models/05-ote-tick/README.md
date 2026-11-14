@@ -20,6 +20,7 @@
 Отчёт с графиками сделок: `results/step6_report.html`.
 
 ## Запуск
-`node backtest.js` → `node report.js` · `node crossmarket.js` · `node forward.js` (журнал вперёд, `forward_daily.cmd` для планировщика)
+Python (из корня репозитория): `python models/05-ote-tick/model.py` (`--stocks` — 10 акций). Журнал вперёд и HTML-отчёт пока на JS.
+JS: `node backtest.js` → `node report.js` · `node crossmarket.js` · `node forward.js` (журнал вперёд, `forward_daily.cmd` для планировщика)
 
 _Исследование, не инвестиционный совет._
