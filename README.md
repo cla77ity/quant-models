@@ -7,7 +7,7 @@
 | # | Модель | Рынки | Ключевой результат | Статус |
 |---|---|---|---|---|
 | 01 | [Macro regime filter](models/01-macro-regime) | Nasdaq-100, S&P 500 · daily · 2008–2026 | 1.06 (NDX, тренд + макро, 2017–26) | 🟡 risk filter |
-| 02 | [ICT zones: RB / OB / FVG, key opens](models/02-ict-zones) | NQ/ES (QQQ/SPY perps) + 10 stocks · 5–15m · 2026 | +0.20R/сделка (RB CE по тренду) | 🟡 RB CE — forward test |
+| 02 | [ICT zones: RB / OB / FVG, key opens](models/02-ict-zones) | NQ/ES (QQQ/SPY perps) + 10 stocks · 5–15m · 2026 | RB CE −0.39R (бывший «+0.20R» — артефакт) | 🔴 no edge |
 | 03 | [RB + Fibonacci confluence](models/03-rb-fib) | NQ/ES + 10 stocks · 5m · 2026 | ≈0R | 🔴 no edge |
 | 04 | [RB entry model (RBV)](models/04-rb-video) | NQ/ES · 5m · 2026; BTC/ETH 2019–2026 | +0.29R/сделка (NQ/ES, t 1.5) | 🟡 candidate |
 | 05 | [OTE top / bottom tick](models/05-ote-tick) | NQ/ES · 5m · 2026 | +0.03R/сделка (t 0.1) | 🔴 no edge · forward journal |
@@ -17,6 +17,7 @@
 | 09 | [NQ / ES daily on CFD](models/09-index-cfd-daily) | NQ, ES · daily · 2002–2026 | 0.65 NQ B&H · 0.58 SMA200 | 🟡 risk management |
 | 10 | [Risk parity on a CFD account](models/10-cfd-risk-parity) | 21 markets (indices, bonds, metals, oil, FX) · daily · 2007–2026 | 0.37 (0.64 без наценки) | 🟡 basis for model E |
 | 11 | [Model E — risk parity + SMA200 for a CFD broker](models/11-model-e) | 7 index CFDs + gold + silver · daily · 2007–2026 · live on demo | 0.58 без наценки · 0.18 на свопах HeroFX | 🟢 live (demo) |
+| 12 | [RBV-бот для пропа (MT5)](models/12-rbv-prop-bot) | NAS100, US500 CFD · 5m · NLF Instant Flex 10k | +0.22R при спреде CFD, t 1.2; риск 0.20% | 🟡 эксперимент |
 
 🟢 работает на демо · 🟡 кандидат / полезно как риск-фильтр · 🔴 преимущества нет
 

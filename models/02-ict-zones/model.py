@@ -157,10 +157,13 @@ def part_b(D):
                 stop = ev["stop"] - dr * 0.02 * ev["atr"]
                 add(ev, "край зоны", dr, ev["entry"], stop, j, True)
                 for k in range(j, min(len(c), j + WAIT * 8)):                 # лимит в середину зоны (CE)
-                    if l[k] <= stop if dr > 0 else h[k] >= stop:
-                        break
+                    # сначала проверяем уровень входа: цена по пути к стопу ПРОХОДИТ CE, лимит исполняется,
+                    # а стоп в той же свече засчитывает walk(first_bar_stop=True). Обратный порядок (как в JS-версии)
+                    # выкидывал именно эти убыточные сделки и рисовал ложный плюс +0.20R.
                     if l[k] <= ev["ce"] if dr > 0 else h[k] >= ev["ce"]:
                         add(ev, "середина (CE)", dr, ev["ce"], stop, k, True); break
+                    if l[k] <= stop if dr > 0 else h[k] >= stop:
+                        break
                 for k in range(j, min(len(c), j + WAIT)):                     # подтверждение: закрытие обратно из зоны
                     if l[k] <= stop if dr > 0 else h[k] >= stop:
                         break
@@ -172,10 +175,10 @@ def part_b(D):
                     s_stop = ev["ext"] - dr * 0.02 * ev["atr"]
                     add(ev, "стоп за свипом", dr, ev["entry"], s_stop, j, False)
                     for k in range(j + 1, min(len(c), j + 1 + WAIT)):
+                        if l[k] <= ev["level"] if dr > 0 else h[k] >= ev["level"]:   # уровень раньше стопа (см. CE)
+                            add(ev, "ретест уровня", dr, ev["level"], s_stop, k, True); break
                         if l[k] <= s_stop if dr > 0 else h[k] >= s_stop:
                             break
-                        if l[k] <= ev["level"] if dr > 0 else h[k] >= ev["level"]:
-                            add(ev, "ретест уровня", dr, ev["level"], s_stop, k, True); break
     trades.sort(key=lambda x: x["t"])
     F = {"RB": {"все": lambda x: True, "по тренду": lambda x: x["trend"], "по тренду + киллзона": lambda x: x["trend"] and x["kz"],
                 "RB в макро-окне 09:50–10:10": lambda x: x["inMacro"], "RB со снятием ликвидности": lambda x: x["swept"], "по тренду + (макро или снятие)": lambda x: x["trend"] and (x["inMacro"] or x["swept"])},
@@ -242,13 +245,13 @@ def part_c(D):
                     if l[k] <= ev["ce"] if dr > 0 else h[k] >= ev["ce"]:
                         pnl += 0.5 * ((wlk(dr, ev["ce"], wick, tgt, k, False) - ev["ce"]) * dr) - 0.5 * cost * ev["ce"]; break
                 res["половина на краю + половина в CE"] = pnl / plan
-            for k in range(j, min(len(c), j + 48)):                      # для сравнения: только CE
-                if hit_s(dr, k, wick):
-                    break
+            for k in range(j, min(len(c), j + 48)):                      # для сравнения: только CE (вход раньше стопа)
                 if l[k] <= ev["ce"] if dr > 0 else h[k] >= ev["ce"]:
                     R = abs(ev["ce"] - wick)
                     if R >= 0.05 * A:
                         res["для сравнения: только CE · 2R"] = (wlk(dr, ev["ce"], wick, ev["ce"] + dr * 2 * R, k, False) - ev["ce"]) * dr / R - cost * ev["ce"] / R
+                    break
+                if hit_s(dr, k, wick):
                     break
             rows.append(dict(group="idx" if sym in INDEX else "stk", t=int(t5[j]), trend=trend(ev["t"]) == (dr > 0), kz=kz(m), res=res))
     rows.sort(key=lambda x: x["t"])
