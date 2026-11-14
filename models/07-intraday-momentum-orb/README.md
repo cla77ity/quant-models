@@ -16,6 +16,7 @@
 прохождение челленджа ничего не доказывает.
 
 ## Запуск
-`node backtest.js`
+Python (из корня репозитория): `python models/07-intraday-momentum-orb/model.py`
+JS: `node backtest.js`
 
 _Исследование, не инвестиционный совет._

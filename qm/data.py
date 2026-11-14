@@ -9,6 +9,8 @@ qm.data — загрузка данных с кэшем.
 """
 import json
 import os
+import shutil
+import subprocess
 import time
 import urllib.request
 from pathlib import Path
@@ -24,16 +26,48 @@ def _fresh(path):
     return path.exists() and time.time() - path.stat().st_mtime < MAX_AGE
 
 
+def _curl(url):
+    """Скачать через системный curl (есть в Windows 10+). FRED не отвечает на запросы из Python urllib,
+    но спокойно отдаёт данные curl'у — поэтому для него идём сразу сюда."""
+    exe = shutil.which("curl") or r"C:\Windows\System32\curl.exe"
+    res = subprocess.run([exe, "-s", "-f", "-m", "60", "-A", "Mozilla/5.0", url], capture_output=True, timeout=90)
+    if res.returncode != 0:
+        raise OSError(f"curl код {res.returncode}")
+    return res.stdout.decode("utf-8")
+
+
+def _node(url):
+    """Скачать через Node.js fetch. FRED отвечает Node, но часто «подвешивает» Python urllib и curl
+    (фильтр по отпечатку соединения), поэтому для FRED сначала пробуем Node, если он установлен."""
+    exe = shutil.which("node")
+    if not exe:
+        raise OSError("node не установлен")
+    js = ("fetch(process.argv[1],{headers:{'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36'}})"
+          ".then(r=>{if(!r.ok)process.exit(2);return r.text()}).then(t=>process.stdout.write(t)).catch(()=>process.exit(3))")
+    res = subprocess.run([exe, "-e", js, url], capture_output=True, timeout=90)
+    if res.returncode != 0:
+        raise OSError(f"node код {res.returncode}")
+    return res.stdout.decode("utf-8")
+
+
 def _get(url, tries=3):
     """Скачать текст по URL: 3 попытки с паузой; если сеть не отвечает — исключение (вызывающий возьмёт старый кэш)."""
+    if "stlouisfed.org" in url:
+        for fetcher in (_node, _curl):
+            try:
+                return fetcher(url)
+            except (OSError, subprocess.TimeoutExpired):
+                pass
+        raise OSError("FRED не ответил ни через node, ни через curl")
     for k in range(tries):
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            # полный заголовок браузера: FRED «подвешивает» запросы с коротким User-Agent
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36"})
             with urllib.request.urlopen(req, timeout=30) as resp:
                 return resp.read().decode("utf-8")
         except OSError:
             if k == tries - 1:
-                raise
+                return _curl(url)                     # последняя попытка — через curl
             time.sleep(2 * (k + 1))
 
 
