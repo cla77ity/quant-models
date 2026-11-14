@@ -14,6 +14,7 @@
 | US500, купить и держать | +5.6% | 0.38 | −59% | −48% | −34% | −22% |
 
 ## Запуск
-`node backtest.js`
+Python (из корня репозитория): `python models/10-cfd-risk-parity/model.py`
+JS: `node backtest.js`
 
 _Исследование, не инвестиционный совет._

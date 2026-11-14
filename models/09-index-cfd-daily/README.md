@@ -15,6 +15,7 @@
 Lehman: держать NQ −52%, с SMA200 −17%.
 
 ## Запуск
-`node backtest.js`
+Python (из корня репозитория): `python models/09-index-cfd-daily/model.py`
+JS: `node backtest.js`
 
 _Исследование, не инвестиционный совет._

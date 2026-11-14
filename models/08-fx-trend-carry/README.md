@@ -19,6 +19,7 @@
 Кризисы: тренд 2008 +12%, 2022 +17%; керри 2008 −16%, 2020 −12%. Отчёт: `results/step9_report.html`.
 
 ## Запуск
-`node backtest.js` → `node report.js`
+Python (из корня репозитория): `python models/08-fx-trend-carry/model.py`
+JS: `node backtest.js` → `node report.js`
 
 _Исследование, не инвестиционный совет._
